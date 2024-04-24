@@ -36,22 +36,20 @@
         if (is_init) {
             for (let data of datas) {
                 const num = data[0];
-                date = new  Date(data[1])
+                date = new Date(data[1])
                 if (last_date === null) {
                     last_date = date
                     total = num
                     continue
                 }
                 total = getResult(total, last_date, date) + num;
-                console.log(`${date.toLocaleString()} ${num > 0 ? "存入" : "取出"}${num} \n余额: ${total}`)
             }
             is_init = false
-        } else {
-            date = new Date()
-            total = getResult(total, last_date, date)
         }
-        last_date = date;
+        date = new Date()
+        total = getResult(total, last_date, date)
         document.getElementById('numberDisplay').innerText = total.toFixed(6);
+        last_date = date;
     }
 
     getNowTotal()
