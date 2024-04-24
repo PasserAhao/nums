@@ -10,34 +10,53 @@
     </div>
 </div>
 <script>
-    let a = 12057.79;
-    let b = "2024-04-08 15:39:00";
     let c = 0.03;
+    let datas = [
+        [2073, "2024-04-24 00:00:00"],
+    ]
 
     // 计算今年的总天数
-    const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-    const endOfYear = new Date(new Date().getFullYear() + 1, 0, 1);
     const oneDay = 24 * 60 * 60 * 1000; // 一天的毫秒数
-    const totalDaysThisYear = Math.round((endOfYear - startOfYear) / oneDay);
+    const getdaysByYear = () => {
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+        const endOfYear = new Date(new Date().getFullYear() + 1, 0, 1);
+        return Math.round((endOfYear - startOfYear) / oneDay)
+    }
+    days = getdaysByYear()
+    const getResult = (num, s, e) => {
+        const day = (e - s) / oneDay
+        return num + ((num * c) / days) * day
+    }
+    let total = 0;
+    let last_date = null;
+    let is_init = true
 
-    const bDate = new Date(b);
-
-    function updateDisplayValue() {
-        const now = new Date();
-        // 计算当前日期减去b的天数
-        const daysSinceB = (now - bDate) / oneDay;
-
-        // 根据提供的逻辑计算展示的值
-        const displayValue = a + ((a * c) / totalDaysThisYear) * daysSinceB;
-
-        // 展示结果
-        document.getElementById('numberDisplay').innerText = displayValue.toFixed(6);
+    function getNowTotal() {
+        let date = null
+        if (is_init) {
+            for (let data of datas) {
+                const num = data[0];
+                date = new  Date(data[1])
+                if (last_date === null) {
+                    last_date = date
+                    total = num
+                    continue
+                }
+                total = getResult(total, last_date, date) + num;
+                console.log(`${date.toLocaleString()} ${num > 0 ? "存入" : "取出"}${num} \n余额: ${total}`)
+            }
+            is_init = false
+        } else {
+            date = new Date()
+            total = getResult(total, last_date, date)
+        }
+        last_date = date;
+        document.getElementById('numberDisplay').innerText = total.toFixed(6);
     }
 
-    // 初始化渲染一次
-    updateDisplayValue();
+    getNowTotal()
     // 每秒更新一次displayValue的值
-    setInterval(updateDisplayValue, 1000);
+    setInterval(getNowTotal, 1000);
 </script>
 </body>
 </html>
