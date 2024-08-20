@@ -6,7 +6,9 @@
 </head>
 <body>
 <div style="width: 100vw">
-    <div id="numberDisplay" style="width: 500px;color: #a72e58;margin: 40vh auto;font-size: 100px">计算中...
+    <div style="width: 600px;color: #a72e58;margin: 40vh auto;font-size: 60px;text-align: center">
+        <div id="principal">计算中...</div>
+        <div id="account" >计算中...</div>
     </div>
 </div>
 <script>
@@ -19,8 +21,14 @@
         [500, "2024-07-01 00:00:00"],
         [405, "2024-08-01 00:00:00"],
         [300, "2024-08-02 00:00:00"],
-        [1000, "2024-08-20 10:00:00"]
+        [1003, "2024-08-20 10:00:00"] // 2024-08-20 存入1000 ➕ 补3块钱
     ]
+    // 计算本金
+    let principal = 0;
+    for (let data of datas){
+        principal += data[0]
+    }
+    document.getElementById('principal').innerText = `本金: ${principal.toFixed(6)}`;
 
     // 计算今年的总天数
     const oneDay = 24 * 60 * 60 * 1000; // 一天的毫秒数
@@ -34,8 +42,9 @@
         const day = (e - s) / oneDay
         return num + ((num * c) / days) * day
     }
+
+
     let total = 0;
-    let principal = 0;
     let last_date = null;
     let is_init = true
 
@@ -51,12 +60,13 @@
                     continue
                 }
                 total = getResult(total, last_date, date) + num;
+                last_date = date
             }
             is_init = false
         }
         date = new Date()
         total = getResult(total, last_date, date)
-        document.getElementById('numberDisplay').innerText = total.toFixed(6);
+        document.getElementById('account').innerText = `余额: ${total.toFixed(6)}`;
         last_date = date;
     }
     getNowTotal()
