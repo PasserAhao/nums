@@ -6,9 +6,10 @@
 </head>
 <body>
 <div style="width: 100vw">
-    <div style="width: 600px;color: #a72e58;margin: 40vh auto;font-size: 60px;text-align: center">
+    <div style="width: 600px;color: #a72e58;margin: 40vh auto;font-size: 12px;text-align: center">
         <div id="principal">计算中...</div>
         <div id="account" >计算中...</div>
+        <div id="profit" >计算中...</div>
     </div>
 </div>
 <script>
@@ -50,9 +51,12 @@
     let total = 0;
     let last_date = null;
     let is_init = true
+    let total_profit = 0
 
     function getNowTotal() {
         let date = null
+        let _num = 0
+        let profit = 0
         if (is_init) {
             for (let data of datas) {
                 const num = data[0];
@@ -62,14 +66,24 @@
                     total = num
                     continue
                 }
-                total = getResult(total, last_date, date) + num;
+                _num = getResult(total, last_date, date)
+                profit = _num - total
+                total_profit += profit
+                if (profit>0){
+                    console.log(`${last_date.toLocaleDateString()}-${date.toLocaleDateString()}产生的收益: ${profit}`)
+                }
+                total = _num + num;
                 last_date = date
             }
             is_init = false
         }
         date = new Date()
-        total = getResult(total, last_date, date)
+        _num = getResult(total, last_date, date)
+        profit = _num - total
+        total_profit +=  profit
+        total = _num
         document.getElementById('account').innerText = `余额: ${total.toFixed(6)}`;
+        document.getElementById('profit').innerText = `收益: ${total_profit.toFixed(6)}`;
         last_date = date;
     }
     getNowTotal()
