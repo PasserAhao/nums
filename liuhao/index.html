@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>展示数字</title>
+</head>
+<body>
+<div style="width: 100vw">
+    <div style="width: 600px;color: #a72e58;margin: 40vh auto;font-size: 60px;text-align: center">
+        <div id="principal">计算中...</div>
+        <div id="account" >计算中...</div>
+        <div id="profit" >计算中...</div>
+    </div>
+</div>
+<script>
+    let c = 0.03;
+    let datas = [
+        [1000, "2025-07-01 00:00:00"],
+    ]
+    // 计算本金
+    const principal = datas.reduce((sum, [amount]) => sum + amount, 0);
+    document.getElementById('principal').innerText = `本金: ${principal.toFixed(6)}`;
+
+    // 计算今年的总天数
+    const oneDay = 24 * 60 * 60 * 1000; // 一天的毫秒数
+    const getdaysByYear = () => {
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+        const endOfYear = new Date(new Date().getFullYear() + 1, 0, 1);
+        return Math.round((endOfYear - startOfYear) / oneDay)
+    }
+    days = getdaysByYear()
+    const getResult = (num, s, e) => {
+        const day = (e - s) / oneDay
+        return num + ((num * c) / days) * day
+    }
+
+
+    let total = 0;
+    let last_date = null;
+    let is_init = true
+    let total_profit = 0
+
+    function getNowTotal() {
+        let date = null
+        let _num = 0
+        let profit = 0
+        if (is_init) {
+            for (let data of datas) {
+                const num = data[0];
+                date = new Date(data[1])
+                if (last_date === null) {
+                    last_date = date
+                    total = num
+                    continue
+                }
+                _num = getResult(total, last_date, date)
+                profit = _num - total
+                total_profit += profit
+                if (profit>0){
+                    console.log(`${last_date.toLocaleDateString()}-${date.toLocaleDateString()}产生的收益: ${profit}`)
+                }
+                total = _num + num;
+                last_date = date
+            }
+            is_init = false
+        }
+        date = new Date()
+        _num = getResult(total, last_date, date)
+        profit = _num - total
+        total_profit +=  profit
+        total = _num
+        document.getElementById('account').innerText = `余额: ${total.toFixed(6)}`;
+        document.getElementById('profit').innerText = `收益: ${total_profit.toFixed(6)}`;
+        last_date = date;
+    }
+    getNowTotal()
+    // 每秒更新一次displayValue的值
+    setInterval(getNowTotal, 1000);
+</script>
+</body>
+</html>
